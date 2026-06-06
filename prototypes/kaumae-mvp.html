@@ -1,0 +1,187 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>KauMae AI MVP</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #18212b;
+      --muted: #66707c;
+      --line: #d9e0e7;
+      --paper: #ffffff;
+      --wash: #f3f6f8;
+      --accent: #0c7a75;
+      --accent-dark: #075b57;
+      --gold: #b87514;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Hiragino Sans", "Yu Gothic", sans-serif;
+      background: var(--wash);
+      color: var(--ink);
+    }
+    main {
+      width: min(440px, 100%);
+      min-height: 100vh;
+      margin: 0 auto;
+      background: #edf2f4;
+      padding: 18px;
+    }
+    header {
+      padding: 20px 2px 8px;
+    }
+    h1 {
+      margin: 0;
+      font-size: 34px;
+      letter-spacing: 0;
+    }
+    .lead {
+      margin: 10px 0 0;
+      font-size: 24px;
+      font-weight: 750;
+    }
+    .sub {
+      color: var(--muted);
+      line-height: 1.5;
+    }
+    .card {
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 16px;
+      margin-top: 14px;
+    }
+    .row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .space { justify-content: space-between; }
+    .item-art {
+      width: 92px;
+      aspect-ratio: 1;
+      border-radius: 8px;
+      background:
+        linear-gradient(135deg, rgba(12,122,117,.16), rgba(184,117,20,.12)),
+        #e8eef2;
+      display: grid;
+      place-items: center;
+      color: var(--accent-dark);
+      font-size: 38px;
+    }
+    .pill-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-top: 12px;
+    }
+    .pill {
+      background: #f6f8fa;
+      border-radius: 6px;
+      padding: 9px 10px;
+      min-height: 52px;
+    }
+    .pill small {
+      display: block;
+      color: var(--muted);
+      margin-bottom: 3px;
+    }
+    button {
+      width: 100%;
+      border: 0;
+      border-radius: 8px;
+      padding: 14px 16px;
+      margin-top: 14px;
+      background: var(--accent);
+      color: white;
+      font-size: 16px;
+      font-weight: 750;
+    }
+    .score {
+      font-size: 38px;
+      color: var(--accent-dark);
+      font-weight: 800;
+    }
+    .reason {
+      display: flex;
+      gap: 8px;
+      align-items: flex-start;
+      margin-top: 9px;
+      color: #27313b;
+    }
+    .reason span:first-child { color: var(--accent); }
+    .price {
+      color: var(--gold);
+      font-weight: 750;
+    }
+    footer {
+      margin: 18px 0 6px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.5;
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <header>
+      <h1>KauMae AI</h1>
+      <p class="lead">この服、買っていい？</p>
+      <p class="sub">買う前に、似合うか・着回せるかをAIでチェック。</p>
+    </header>
+
+    <section class="card row space">
+      <div>
+        <strong>無料チェック</strong>
+        <p class="sub" style="margin:4px 0 0">残り 3 回</p>
+      </div>
+      <div style="font-size:26px">✦</div>
+    </section>
+
+    <section class="card">
+      <strong>あなたの条件</strong>
+      <div class="pill-grid">
+        <div class="pill"><small>年代</small>40代</div>
+        <div class="pill"><small>性別</small>男性</div>
+        <div class="pill"><small>体型</small>ストレート</div>
+        <div class="pill"><small>肌色</small>ウォーム</div>
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="row space">
+        <div>
+          <strong>チェックする服</strong>
+          <p style="margin:8px 0 3px;font-size:20px;font-weight:750">Navy jacket</p>
+          <span class="price">¥7,990</span>
+        </div>
+        <div class="item-art">J</div>
+      </div>
+      <button>買う前にチェック</button>
+    </section>
+
+    <section class="card">
+      <div class="row space">
+        <h2 style="margin:0;font-size:22px">買ってOK</h2>
+        <div class="score">90点</div>
+      </div>
+      <div class="reason"><span>✓</span><span>手持ちの白シャツ・グレーパンツと着回しやすいです。</span></div>
+      <div class="reason"><span>✓</span><span>仕事用として清潔感があり、40代の落ち着いた印象に合います。</span></div>
+      <div class="reason"><span>✓</span><span>黒よりネイビーの方が重く見えにくいです。</span></div>
+    </section>
+
+    <section class="card">
+      <strong>KauMae Pro</strong>
+      <p class="sub">月50回の買う前チェック。上身イメージ生成はクレジット制。</p>
+      <button>月額 ¥980 で始める</button>
+    </section>
+
+    <footer>
+      提案は購入判断の参考です。サイズ、実際の着用感、購入結果を保証するものではありません。
+    </footer>
+  </main>
+</body>
+</html>

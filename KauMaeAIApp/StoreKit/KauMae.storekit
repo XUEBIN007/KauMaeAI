@@ -1,0 +1,92 @@
+{
+  "identifier" : "KauMae",
+  "nonRenewingSubscriptions" : [
+
+  ],
+  "products" : [
+    {
+      "displayPrice" : "¥480",
+      "familyShareable" : false,
+      "internalID" : "checks10",
+      "localizations" : [
+        {
+          "description" : "10回分の買う前チェックを追加します。",
+          "displayName" : "10回チェック",
+          "locale" : "ja_JP"
+        }
+      ],
+      "productID" : "kaumae.checks.10",
+      "referenceName" : "10 Buy Checks",
+      "type" : "Consumable"
+    },
+    {
+      "displayPrice" : "¥500",
+      "familyShareable" : false,
+      "internalID" : "images10",
+      "localizations" : [
+        {
+          "description" : "上身イメージ生成に使える10クレジットです。",
+          "displayName" : "画像10クレジット",
+          "locale" : "ja_JP"
+        }
+      ],
+      "productID" : "kaumae.images.10",
+      "referenceName" : "10 Image Credits",
+      "type" : "Consumable"
+    }
+  ],
+  "settings" : {
+    "_applicationInternalID" : "kaumae-local",
+    "_askToBuyEnabled" : false,
+    "_billingGracePeriodEnabled" : false,
+    "_failTransactionsEnabled" : false,
+    "_lastSynchronizedDate" : 759000000,
+    "_storefront" : "JPN",
+    "_storeKitErrors" : [
+
+    ]
+  },
+  "subscriptionGroups" : [
+    {
+      "id" : "kaumae-pro",
+      "localizations" : [
+        {
+          "customAppName" : "KauMae AI",
+          "locale" : "ja_JP"
+        }
+      ],
+      "name" : "KauMae Pro",
+      "subscriptions" : [
+        {
+          "adHocOffers" : [
+
+          ],
+          "codeOffers" : [
+
+          ],
+          "displayPrice" : "¥980",
+          "familyShareable" : false,
+          "groupNumber" : 1,
+          "internalID" : "proMonthly",
+          "introductoryOffer" : null,
+          "localizations" : [
+            {
+              "description" : "月50回の買う前チェックを利用できます。",
+              "displayName" : "KauMae Pro 月額",
+              "locale" : "ja_JP"
+            }
+          ],
+          "productID" : "kaumae.pro.monthly",
+          "recurringSubscriptionPeriod" : "P1M",
+          "referenceName" : "KauMae Pro Monthly",
+          "subscriptionGroupID" : "kaumae-pro",
+          "type" : "RecurringSubscription"
+        }
+      ]
+    }
+  ],
+  "version" : {
+    "major" : 4,
+    "minor" : 0
+  }
+}
