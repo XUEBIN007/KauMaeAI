@@ -113,6 +113,7 @@ private struct CheckTabView: View {
                     ResultView(
                         advice: advice,
                         candidate: candidate,
+                        hasProfilePhoto: profilePhotoData != nil,
                         hasProductPhoto: selectedPhotoData != nil
                     )
                 }
