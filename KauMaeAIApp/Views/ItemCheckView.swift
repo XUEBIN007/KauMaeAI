@@ -1,16 +1,21 @@
 import SwiftUI
 import KauMaeCore
 import PhotosUI
+import UIKit
 
 struct ItemCheckView: View {
     @Binding var candidate: CandidateItem
     @Binding var occasion: Occasion
     @Binding var selectedPhoto: PhotosPickerItem?
+    let selectedPhotoData: Data?
     let onCheck: () -> Void
 
     var body: some View {
         VStack(alignment: .leading, spacing: 14) {
-            PhotoInputView(selectedPhoto: $selectedPhoto, hasPhoto: selectedPhoto != nil)
+            PhotoInputView(
+                selectedPhoto: $selectedPhoto,
+                selectedPhotoData: selectedPhotoData
+            )
 
             HStack(alignment: .top) {
                 VStack(alignment: .leading, spacing: 6) {

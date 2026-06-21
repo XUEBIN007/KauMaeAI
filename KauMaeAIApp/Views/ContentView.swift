@@ -4,6 +4,7 @@ import PhotosUI
 struct ContentView: View {
     @State private var appState = AppState()
     @State private var selectedPhoto: PhotosPickerItem?
+    @State private var selectedPhotoData: Data?
 
     var body: some View {
         @Bindable var appState = appState
@@ -34,13 +35,18 @@ struct ContentView: View {
                     ItemCheckView(
                         candidate: $appState.candidate,
                         occasion: $appState.occasion,
-                        selectedPhoto: $selectedPhoto
+                        selectedPhoto: $selectedPhoto,
+                        selectedPhotoData: selectedPhotoData
                     ) {
                         appState.runCheck()
                     }
 
                     if let advice = appState.latestAdvice {
-                        ResultView(advice: advice)
+                        ResultView(
+                            advice: advice,
+                            candidate: appState.candidate,
+                            hasProductPhoto: selectedPhotoData != nil
+                        )
                     }
 
                     CheckHistoryView(history: appState.history)
@@ -62,6 +68,9 @@ struct ContentView: View {
                 PaywallView {
                     appState.unlockProForPreview()
                 }
+            }
+            .task(id: selectedPhoto) {
+                selectedPhotoData = try? await selectedPhoto?.loadTransferable(type: Data.self)
             }
         }
     }
