@@ -155,6 +155,7 @@ public struct StyleAdvice: Codable, Equatable, Sendable {
     public let suggestedOutfit: [String]
     public let alternativeColor: ClothingColor?
     public let scoreFactors: [ScoreFactor]?
+    public let nextActions: [String]?
 }
 
 public struct StyleAdvisor: Sendable {
@@ -216,7 +217,8 @@ public struct StyleAdvisor: Sendable {
                 alternativeColor: .navy,
                 scoreFactors: scoreFactors + [
                     ScoreFactor(title: "色リスク", points: -12, note: "肌色には別色の方がなじみやすいです。")
-                ]
+                ],
+                nextActions: ["ネイビーを試す", "同じ形の落ち着いた色を見る", "手持ち服ともう一度確認する"]
             )
         }
 
@@ -231,8 +233,22 @@ public struct StyleAdvisor: Sendable {
             reasons: reasons.isEmpty ? ["手持ち服との相性をもう少し確認しましょう。"] : reasons,
             suggestedOutfit: compatibleItems.map(\.name),
             alternativeColor: nil,
-            scoreFactors: scoreFactors
+            scoreFactors: scoreFactors,
+            nextActions: nextActions(for: decision, compatibleItems: compatibleItems)
         )
+    }
+
+    private func nextActions(for decision: BuyDecision, compatibleItems: [WardrobeItem]) -> [String] {
+        switch decision {
+        case .buy:
+            return ["買ってOK", "合わせる服を保存", "履歴であとから確認"]
+        case .skip:
+            return compatibleItems.count < 2
+                ? ["今回は見送り", "手持ち服を追加", "別の色・形で再チェック"]
+                : ["今回は見送り", "価格を下げて探す", "休日用として再チェック"]
+        case .tryDifferentColor:
+            return ["色違いを見る", "ネイビーで再チェック", "手持ち服を確認"]
+        }
     }
 
     private func suggestedOutfit(for candidate: CandidateItem, wardrobe: [WardrobeItem]) -> [WardrobeItem] {

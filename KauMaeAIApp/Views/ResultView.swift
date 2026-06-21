@@ -36,6 +36,21 @@ struct ResultView: View {
                 }
             }
 
+            if let nextActions = advice.nextActions, !nextActions.isEmpty {
+                VStack(alignment: .leading, spacing: 8) {
+                    Text("次にすること")
+                        .font(.headline)
+                    ForEach(nextActions, id: \.self) { action in
+                        Label(action, systemImage: "arrow.right.circle")
+                            .font(.subheadline)
+                            .padding(10)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .background(Color(.secondarySystemGroupedBackground))
+                            .clipShape(RoundedRectangle(cornerRadius: 6))
+                    }
+                }
+            }
+
             if !advice.suggestedOutfit.isEmpty {
                 VStack(alignment: .leading, spacing: 8) {
                     Text("おすすめ合わせ")
