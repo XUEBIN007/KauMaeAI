@@ -6,6 +6,8 @@ struct ContentView: View {
     @State private var appState = AppState()
     @State private var selectedPhoto: PhotosPickerItem?
     @State private var selectedPhotoData: Data?
+    @State private var profilePhoto: PhotosPickerItem?
+    @State private var profilePhotoData: Data?
 
     var body: some View {
         @Bindable var appState = appState
@@ -18,7 +20,9 @@ struct ContentView: View {
                     candidate: $appState.candidate,
                     occasion: $appState.occasion,
                     selectedPhoto: $selectedPhoto,
-                    selectedPhotoData: selectedPhotoData
+                    selectedPhotoData: selectedPhotoData,
+                    profilePhoto: $profilePhoto,
+                    profilePhotoData: profilePhotoData
                 )
                 .navigationTitle("買う前チェック")
                 .navigationBarTitleDisplayMode(.inline)
@@ -67,6 +71,9 @@ struct ContentView: View {
         .task(id: selectedPhoto) {
             selectedPhotoData = try? await selectedPhoto?.loadTransferable(type: Data.self)
         }
+        .task(id: profilePhoto) {
+            profilePhotoData = try? await profilePhoto?.loadTransferable(type: Data.self)
+        }
     }
 }
 
@@ -77,6 +84,8 @@ private struct CheckTabView: View {
     @Binding var occasion: Occasion
     @Binding var selectedPhoto: PhotosPickerItem?
     let selectedPhotoData: Data?
+    @Binding var profilePhoto: PhotosPickerItem?
+    let profilePhotoData: Data?
 
     var body: some View {
         ScrollView {
@@ -99,7 +108,11 @@ private struct CheckTabView: View {
                         hasProductPhoto: selectedPhotoData != nil
                     )
                 }
-                ProfileSetupView(profile: $profile)
+                ProfileSetupView(
+                    profile: $profile,
+                    profilePhoto: $profilePhoto,
+                    profilePhotoData: profilePhotoData
+                )
             }
             .padding(20)
         }

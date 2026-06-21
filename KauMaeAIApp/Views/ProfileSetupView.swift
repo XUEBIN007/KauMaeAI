@@ -1,13 +1,35 @@
 import SwiftUI
 import KauMaeCore
+import PhotosUI
+import UIKit
 
 struct ProfileSetupView: View {
     @Binding var profile: StyleProfile
+    @Binding var profilePhoto: PhotosPickerItem?
+    let profilePhotoData: Data?
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             Text("あなたの条件")
                 .font(.headline)
+
+            PhotosPicker(selection: $profilePhoto, matching: .images) {
+                HStack(spacing: 12) {
+                    ProfilePhotoThumbnail(data: profilePhotoData)
+                    VStack(alignment: .leading, spacing: 3) {
+                        Text(profilePhotoData == nil ? "本人写真を追加" : "本人写真を変更")
+                            .font(.subheadline.weight(.semibold))
+                        Text("顔写真または全身写真。試着生成の元画像として使います。")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                    }
+                    Spacer()
+                }
+                .padding(12)
+                .background(Color(.secondarySystemGroupedBackground))
+                .clipShape(RoundedRectangle(cornerRadius: 8))
+            }
+            .buttonStyle(.plain)
 
             VStack(spacing: 10) {
                 EnumPickerRow(title: "年代", selection: profileBinding(\.ageRange)) { $0.displayName }
@@ -34,6 +56,27 @@ struct ProfileSetupView: View {
             get: { profile[keyPath: keyPath] },
             set: { profile = profile.replacing(keyPath, with: $0) }
         )
+    }
+}
+
+private struct ProfilePhotoThumbnail: View {
+    let data: Data?
+
+    var body: some View {
+        Group {
+            if let data, let uiImage = UIImage(data: data) {
+                Image(uiImage: uiImage)
+                    .resizable()
+                    .scaledToFill()
+            } else {
+                Image(systemName: "person.crop.rectangle.badge.plus")
+                    .font(.title2)
+                    .foregroundStyle(.blue)
+            }
+        }
+        .frame(width: 58, height: 58)
+        .background(Color(.tertiarySystemGroupedBackground))
+        .clipShape(RoundedRectangle(cornerRadius: 8))
     }
 }
 
