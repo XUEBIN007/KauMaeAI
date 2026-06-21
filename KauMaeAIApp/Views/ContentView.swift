@@ -95,6 +95,11 @@ private struct CheckTabView: View {
             VStack(alignment: .leading, spacing: 24) {
                 HeroHeader()
                 FreeCheckBanner(remainingFreeChecks: appState.remainingFreeChecks)
+                TryOnReadinessView(
+                    hasProfilePhoto: profilePhotoData != nil,
+                    hasProductPhoto: selectedPhotoData != nil,
+                    wardrobeCount: appState.wardrobe.count
+                )
                 ItemCheckView(
                     candidate: $candidate,
                     occasion: $occasion,
@@ -275,6 +280,65 @@ struct FreeCheckBanner: View {
         .padding(16)
         .background(.white)
         .clipShape(RoundedRectangle(cornerRadius: 8))
+    }
+}
+
+private struct TryOnReadinessView: View {
+    let hasProfilePhoto: Bool
+    let hasProductPhoto: Bool
+    let wardrobeCount: Int
+
+    private var readyCount: Int {
+        [hasProfilePhoto, hasProductPhoto, wardrobeCount >= 3].filter { $0 }.count
+    }
+
+    private var summary: String {
+        readyCount == 3 ? "AI試着の入力がそろっています" : "AI試着まであと \(3 - readyCount) ステップ"
+    }
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            HStack {
+                VStack(alignment: .leading, spacing: 4) {
+                    Text("AI試着準備")
+                        .font(.headline)
+                    Text(summary)
+                        .font(.subheadline)
+                        .foregroundStyle(.secondary)
+                }
+                Spacer()
+                Text("\(readyCount)/3")
+                    .font(.title3.weight(.bold))
+                    .foregroundStyle(readyCount == 3 ? .green : .blue)
+            }
+
+            VStack(spacing: 8) {
+                ReadinessRow(title: "本人写真", isReady: hasProfilePhoto)
+                ReadinessRow(title: "商品写真", isReady: hasProductPhoto)
+                ReadinessRow(title: "手持ち服 3点以上", isReady: wardrobeCount >= 3)
+            }
+        }
+        .padding(16)
+        .background(.white)
+        .clipShape(RoundedRectangle(cornerRadius: 8))
+    }
+}
+
+private struct ReadinessRow: View {
+    let title: String
+    let isReady: Bool
+
+    var body: some View {
+        HStack {
+            Image(systemName: isReady ? "checkmark.circle.fill" : "circle")
+                .foregroundStyle(isReady ? .green : .secondary)
+            Text(title)
+                .font(.subheadline)
+            Spacer()
+            Text(isReady ? "OK" : "未入力")
+                .font(.caption.weight(.semibold))
+                .foregroundStyle(isReady ? .green : .secondary)
+        }
     }
 }
 
