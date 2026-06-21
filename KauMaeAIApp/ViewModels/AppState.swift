@@ -39,6 +39,9 @@ final class AppState {
         didSet { save() }
     }
     var latestAdvice: StyleAdvice?
+    var history: [CheckHistoryEntry] = [] {
+        didSet { save() }
+    }
     var showPaywall = false
     var occasion: Occasion = .work {
         didSet { save() }
@@ -60,12 +63,19 @@ final class AppState {
     func runCheck() {
         switch quota.consumeCheck() {
         case .allowed:
-            latestAdvice = StyleAdvisor().evaluate(
+            let advice = StyleAdvisor().evaluate(
                 candidate: candidate,
                 profile: profile,
                 wardrobe: wardrobe,
                 occasion: occasion
             )
+            latestAdvice = advice
+            history.insert(CheckHistoryEntry(
+                checkedAt: Date(),
+                candidate: candidate,
+                occasion: occasion,
+                advice: advice
+            ), at: 0)
         case .requiresPayment:
             showPaywall = true
         }
@@ -93,6 +103,7 @@ final class AppState {
         candidate = Self.defaultCandidate
         wardrobe = Self.defaultWardrobe
         occasion = .work
+        history = []
         latestAdvice = nil
         showPaywall = false
     }
@@ -103,7 +114,8 @@ final class AppState {
             profile: profile,
             candidate: candidate,
             wardrobe: wardrobe,
-            occasion: occasion
+            occasion: occasion,
+            history: history
         )
         guard let data = try? JSONEncoder().encode(snapshot) else { return }
         defaults.set(data, forKey: Self.storageKey)
@@ -121,6 +133,29 @@ final class AppState {
         candidate = snapshot.candidate
         wardrobe = snapshot.wardrobe
         occasion = snapshot.occasion
+        history = snapshot.history ?? []
+    }
+}
+
+struct CheckHistoryEntry: Codable, Identifiable {
+    let id: UUID
+    let checkedAt: Date
+    let candidate: CandidateItem
+    let occasion: Occasion
+    let advice: StyleAdvice
+
+    init(
+        id: UUID = UUID(),
+        checkedAt: Date,
+        candidate: CandidateItem,
+        occasion: Occasion,
+        advice: StyleAdvice
+    ) {
+        self.id = id
+        self.checkedAt = checkedAt
+        self.candidate = candidate
+        self.occasion = occasion
+        self.advice = advice
     }
 }
 
@@ -157,4 +192,5 @@ private struct PersistedAppState: Codable {
     let candidate: CandidateItem
     let wardrobe: [WardrobeItem]
     let occasion: Occasion
+    let history: [CheckHistoryEntry]?
 }

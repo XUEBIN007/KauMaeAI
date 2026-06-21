@@ -43,6 +43,8 @@ struct ContentView: View {
                         ResultView(advice: advice)
                     }
 
+                    CheckHistoryView(history: appState.history)
+
                     Button(role: .destructive) {
                         appState.resetLocalDataForPreview()
                     } label: {
