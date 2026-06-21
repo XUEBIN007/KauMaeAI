@@ -10,6 +10,7 @@ struct WardrobeEditorView: View {
     @State private var draftCategory: ItemCategory = .top
     @State private var draftColor: ClothingColor = .white
     @State private var draftFormality: Formality = .smartCasual
+    @State private var filter: WardrobeFilter = .all
 
     var body: some View {
         VStack(alignment: .leading, spacing: 14) {
@@ -23,6 +24,13 @@ struct WardrobeEditorView: View {
             }
 
             WardrobeSummaryView(wardrobe: wardrobe)
+
+            Picker("表示", selection: $filter) {
+                ForEach(WardrobeFilter.allCases, id: \.self) { filter in
+                    Text(filter.title).tag(filter)
+                }
+            }
+            .pickerStyle(.segmented)
 
             VStack(spacing: 10) {
                 TextField("例: 白シャツ", text: $draftName)
@@ -56,7 +64,7 @@ struct WardrobeEditorView: View {
                     .foregroundStyle(.secondary)
             } else {
                 VStack(spacing: 8) {
-                    ForEach(Array(wardrobe.enumerated()), id: \.offset) { index, item in
+                    ForEach(filteredItems, id: \.offset) { index, item in
                         WardrobeRow(item: item) {
                             onDelete(IndexSet(integer: index))
                         }
@@ -67,6 +75,36 @@ struct WardrobeEditorView: View {
         .padding(16)
         .background(.white)
         .clipShape(RoundedRectangle(cornerRadius: 8))
+    }
+
+    private var filteredItems: [(offset: Int, element: WardrobeItem)] {
+        Array(wardrobe.enumerated()).filter { _, item in
+            switch filter {
+            case .all: true
+            case .top: item.category == .top
+            case .bottom: item.category == .bottom
+            case .outerwear: item.category == .outerwear
+            case .shoes: item.category == .shoes
+            }
+        }
+    }
+}
+
+private enum WardrobeFilter: CaseIterable {
+    case all
+    case top
+    case bottom
+    case outerwear
+    case shoes
+
+    var title: String {
+        switch self {
+        case .all: "すべて"
+        case .top: "上"
+        case .bottom: "下"
+        case .outerwear: "羽織"
+        case .shoes: "靴"
+        }
     }
 }
 
