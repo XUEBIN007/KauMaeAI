@@ -1,48 +1,48 @@
-public enum AgeRange: String, CaseIterable, Sendable {
+public enum AgeRange: String, CaseIterable, Codable, Sendable {
     case twenties
     case thirties
     case forties
     case fifties
 }
 
-public enum Gender: String, CaseIterable, Sendable {
+public enum Gender: String, CaseIterable, Codable, Sendable {
     case female
     case male
     case other
 }
 
-public enum BodyShape: String, CaseIterable, Sendable {
+public enum BodyShape: String, CaseIterable, Codable, Sendable {
     case straight
     case wave
     case natural
 }
 
-public enum SkinTone: String, CaseIterable, Sendable {
+public enum SkinTone: String, CaseIterable, Codable, Sendable {
     case warm
     case cool
     case neutral
 }
 
-public enum HairStyle: String, CaseIterable, Sendable {
+public enum HairStyle: String, CaseIterable, Codable, Sendable {
     case short
     case medium
     case long
 }
 
-public enum StyleGoal: String, CaseIterable, Sendable {
+public enum StyleGoal: String, CaseIterable, Codable, Sendable {
     case cleanWork
     case polished
     case softCasual
 }
 
-public enum ItemCategory: String, CaseIterable, Sendable {
+public enum ItemCategory: String, CaseIterable, Codable, Sendable {
     case top
     case bottom
     case outerwear
     case shoes
 }
 
-public enum ClothingColor: String, CaseIterable, Sendable {
+public enum ClothingColor: String, CaseIterable, Codable, Sendable {
     case white
     case black
     case gray
@@ -52,29 +52,29 @@ public enum ClothingColor: String, CaseIterable, Sendable {
     case mustard
 }
 
-public enum Formality: Int, CaseIterable, Sendable {
+public enum Formality: Int, CaseIterable, Codable, Sendable {
     case casual = 0
     case smartCasual = 1
     case businessCasual = 2
 }
 
-public enum Pattern: String, CaseIterable, Sendable {
+public enum Pattern: String, CaseIterable, Codable, Sendable {
     case solid
     case logo
 }
 
-public enum Occasion: String, CaseIterable, Sendable {
+public enum Occasion: String, CaseIterable, Codable, Sendable {
     case work
     case weekend
 }
 
-public enum BuyDecision: String, CaseIterable, Sendable {
+public enum BuyDecision: String, CaseIterable, Codable, Sendable {
     case buy
     case skip
     case tryDifferentColor
 }
 
-public struct StyleProfile: Equatable, Sendable {
+public struct StyleProfile: Codable, Equatable, Sendable {
     public let ageRange: AgeRange
     public let gender: Gender
     public let bodyShape: BodyShape
@@ -102,7 +102,7 @@ public struct StyleProfile: Equatable, Sendable {
     }
 }
 
-public struct WardrobeItem: Equatable, Sendable {
+public struct WardrobeItem: Codable, Equatable, Sendable {
     public let name: String
     public let category: ItemCategory
     public let color: ClothingColor
@@ -116,7 +116,7 @@ public struct WardrobeItem: Equatable, Sendable {
     }
 }
 
-public struct CandidateItem: Equatable, Sendable {
+public struct CandidateItem: Codable, Equatable, Sendable {
     public let name: String
     public let category: ItemCategory
     public let color: ClothingColor
@@ -141,7 +141,7 @@ public struct CandidateItem: Equatable, Sendable {
     }
 }
 
-public struct StyleAdvice: Equatable, Sendable {
+public struct StyleAdvice: Codable, Equatable, Sendable {
     public let score: Int
     public let decision: BuyDecision
     public let headline: String
@@ -239,7 +239,7 @@ public enum CheckAccessResult: Equatable, Sendable {
     case requiresPayment
 }
 
-public struct CheckQuota: Equatable, Sendable {
+public struct CheckQuota: Codable, Equatable, Sendable {
     public private(set) var remainingFreeChecks: Int
     public private(set) var isPaid: Bool
 

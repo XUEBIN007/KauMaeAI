@@ -1,5 +1,6 @@
 .build/
 DerivedData/
+KauMaeAI.xcodeproj/
 *.xcuserdata/
 *.xcuserstate
 .DS_Store

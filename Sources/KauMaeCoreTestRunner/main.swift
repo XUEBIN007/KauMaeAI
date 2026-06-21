@@ -1,3 +1,4 @@
+import Foundation
 import KauMaeCore
 
 @discardableResult
@@ -189,13 +190,57 @@ func testAnalysisPromptAvoidsGuaranteesAndIncludesDecisionFrame() -> Bool {
     ].allSatisfy { $0 }
 }
 
+func testCoreModelsRoundTripThroughJSON() -> Bool {
+    let profile = StyleProfile(
+        ageRange: .thirties,
+        gender: .female,
+        bodyShape: .wave,
+        skinTone: .cool,
+        hairStyle: .long,
+        wearsGlasses: false,
+        styleGoal: .polished
+    )
+    let candidate = CandidateItem(
+        name: "Black dress",
+        category: .top,
+        color: .black,
+        formality: .smartCasual,
+        pattern: .solid,
+        priceJPY: 5990
+    )
+    let wardrobe = WardrobeItem(
+        name: "White sneakers",
+        category: .shoes,
+        color: .white,
+        formality: .casual
+    )
+
+    guard
+        let profileData = try? JSONEncoder().encode(profile),
+        let candidateData = try? JSONEncoder().encode(candidate),
+        let wardrobeData = try? JSONEncoder().encode(wardrobe),
+        let decodedProfile = try? JSONDecoder().decode(StyleProfile.self, from: profileData),
+        let decodedCandidate = try? JSONDecoder().decode(CandidateItem.self, from: candidateData),
+        let decodedWardrobe = try? JSONDecoder().decode(WardrobeItem.self, from: wardrobeData)
+    else {
+        return expect(false, "expected core models to encode and decode")
+    }
+
+    return [
+        expect(decodedProfile == profile, "expected profile JSON round trip"),
+        expect(decodedCandidate == candidate, "expected candidate JSON round trip"),
+        expect(decodedWardrobe == wardrobe, "expected wardrobe JSON round trip")
+    ].allSatisfy { $0 }
+}
+
 let results = [
     testBuyDecisionScoresWardrobeCompatibilityAndScenarioFit(),
     testBuyDecisionRejectsLowFormalityMismatchForWork(),
     testBuyDecisionSuggestsAlternativeColorWhenItemIsUsefulButColorIsRisky(),
     testQuotaAllowsThreeFreeChecksBeforePaywall(),
     testPaidQuotaAllowsChecksWithoutReducingFreeBalance(),
-    testAnalysisPromptAvoidsGuaranteesAndIncludesDecisionFrame()
+    testAnalysisPromptAvoidsGuaranteesAndIncludesDecisionFrame(),
+    testCoreModelsRoundTripThroughJSON()
 ]
 
 if results.allSatisfy({ $0 }) {
