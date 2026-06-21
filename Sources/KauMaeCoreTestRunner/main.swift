@@ -46,7 +46,8 @@ func testBuyDecisionScoresWardrobeCompatibilityAndScenarioFit() -> Bool {
         expect(advice.decision == .buy, "expected buy decision"),
         expect(advice.headline == "買ってOK", "expected buy headline"),
         expect(advice.reasons.contains("手持ちの白シャツ・グレーパンツと着回しやすいです。"), "expected wardrobe compatibility reason"),
-        expect(advice.suggestedOutfit == ["White shirt", "Gray trousers", "Black loafers"], "expected suggested outfit")
+        expect(advice.suggestedOutfit == ["White shirt", "Gray trousers", "Black loafers"], "expected suggested outfit"),
+        expect(advice.scoreFactors?.contains { $0.title == "着回し" && $0.points == 18 } == true, "expected wardrobe score factor")
     ].allSatisfy { $0 }
 }
 

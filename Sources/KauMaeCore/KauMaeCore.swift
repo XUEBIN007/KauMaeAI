@@ -141,6 +141,12 @@ public struct CandidateItem: Codable, Equatable, Sendable {
     }
 }
 
+public struct ScoreFactor: Codable, Equatable, Sendable {
+    public let title: String
+    public let points: Int
+    public let note: String
+}
+
 public struct StyleAdvice: Codable, Equatable, Sendable {
     public let score: Int
     public let decision: BuyDecision
@@ -148,6 +154,7 @@ public struct StyleAdvice: Codable, Equatable, Sendable {
     public let reasons: [String]
     public let suggestedOutfit: [String]
     public let alternativeColor: ClothingColor?
+    public let scoreFactors: [ScoreFactor]?
 }
 
 public struct StyleAdvisor: Sendable {
@@ -161,15 +168,20 @@ public struct StyleAdvisor: Sendable {
     ) -> StyleAdvice {
         var score = 64
         var reasons: [String] = []
+        var scoreFactors: [ScoreFactor] = [
+            ScoreFactor(title: "基本相性", points: 64, note: "プロフィールと普段使いを基準にした初期点です。")
+        ]
 
         if occasion == .work && candidate.formality.rawValue < Formality.businessCasual.rawValue {
             score -= 24
             reasons.append("仕事用としてはカジュアル感が強すぎます。")
+            scoreFactors.append(ScoreFactor(title: "場面", points: -24, note: "仕事用には少しラフです。"))
         }
 
         let compatibleItems = suggestedOutfit(for: candidate, wardrobe: wardrobe)
         if compatibleItems.count >= 2 {
             score += 18
+            scoreFactors.append(ScoreFactor(title: "着回し", points: 18, note: "手持ち服と2点以上合わせられます。"))
         }
         if compatibleItems.map(\.name).contains("White shirt"),
            compatibleItems.map(\.name).contains("Gray trousers") {
@@ -178,12 +190,20 @@ public struct StyleAdvisor: Sendable {
 
         if candidate.formality == .businessCasual && occasion == .work {
             score += 10
+            scoreFactors.append(ScoreFactor(title: "きちんと感", points: 10, note: "仕事でも浮きにくい印象です。"))
         }
         if candidate.pattern == .logo && occasion == .work {
             score -= 8
+            scoreFactors.append(ScoreFactor(title: "柄", points: -8, note: "ロゴは仕事用では少し目立ちます。"))
         }
         if candidate.color == .navy {
             score += 8
+            scoreFactors.append(ScoreFactor(title: "色", points: 8, note: "ネイビーは清潔感と合わせやすさが出ます。"))
+        }
+        if candidate.priceJPY >= 10000 && compatibleItems.count < 2 {
+            score -= 8
+            reasons.append("価格に対して、今の手持ち服では出番が少ないかもしれません。")
+            scoreFactors.append(ScoreFactor(title: "買い物リスク", points: -8, note: "価格のわりに着回し候補が少なめです。"))
         }
 
         if shouldSuggestNavyInstead(candidate: candidate, profile: profile) {
@@ -193,7 +213,10 @@ public struct StyleAdvisor: Sendable {
                 headline: "色違いがおすすめ",
                 reasons: ["形は使いやすいですが、肌色にはネイビーの方がなじみます。"],
                 suggestedOutfit: compatibleItems.map(\.name),
-                alternativeColor: .navy
+                alternativeColor: .navy,
+                scoreFactors: scoreFactors + [
+                    ScoreFactor(title: "色リスク", points: -12, note: "肌色には別色の方がなじみやすいです。")
+                ]
             )
         }
 
@@ -207,7 +230,8 @@ public struct StyleAdvisor: Sendable {
             headline: headline,
             reasons: reasons.isEmpty ? ["手持ち服との相性をもう少し確認しましょう。"] : reasons,
             suggestedOutfit: compatibleItems.map(\.name),
-            alternativeColor: nil
+            alternativeColor: nil,
+            scoreFactors: scoreFactors
         )
     }
 

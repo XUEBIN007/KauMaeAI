@@ -26,6 +26,16 @@ struct ResultView: View {
                 }
             }
 
+            if let factors = advice.scoreFactors, !factors.isEmpty {
+                VStack(alignment: .leading, spacing: 8) {
+                    Text("スコアの内訳")
+                        .font(.headline)
+                    ForEach(factors, id: \.title) { factor in
+                        ScoreFactorRow(factor: factor)
+                    }
+                }
+            }
+
             if !advice.suggestedOutfit.isEmpty {
                 VStack(alignment: .leading, spacing: 8) {
                     Text("おすすめ合わせ")
@@ -48,6 +58,29 @@ struct ResultView: View {
 
     private var scoreColor: Color {
         advice.score >= 75 ? .green : .orange
+    }
+}
+
+private struct ScoreFactorRow: View {
+    let factor: ScoreFactor
+
+    var body: some View {
+        HStack(spacing: 10) {
+            Text(factor.title)
+                .font(.subheadline.weight(.semibold))
+                .frame(width: 78, alignment: .leading)
+            Text(factor.note)
+                .font(.caption)
+                .foregroundStyle(.secondary)
+                .lineLimit(2)
+            Spacer()
+            Text(factor.points >= 0 ? "+\(factor.points)" : "\(factor.points)")
+                .font(.subheadline.weight(.bold))
+                .foregroundStyle(factor.points >= 0 ? .green : .orange)
+        }
+        .padding(10)
+        .background(Color(.secondarySystemGroupedBackground))
+        .clipShape(RoundedRectangle(cornerRadius: 6))
     }
 }
 
