@@ -41,7 +41,10 @@ struct ContentView: View {
             }
 
             NavigationStack {
-                HistoryTabView(history: appState.history)
+                HistoryTabView(
+                    history: appState.history,
+                    onReuse: appState.reuseHistoryEntry
+                )
                     .navigationTitle("履歴")
                     .navigationBarTitleDisplayMode(.inline)
             }
@@ -140,11 +143,12 @@ private struct WardrobeTabView: View {
 
 private struct HistoryTabView: View {
     let history: [CheckHistoryEntry]
+    let onReuse: (CheckHistoryEntry) -> Void
 
     var body: some View {
         ScrollView {
             VStack(spacing: 20) {
-                CheckHistoryView(history: history)
+                CheckHistoryView(history: history, onReuse: onReuse)
             }
             .padding(20)
         }

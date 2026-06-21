@@ -3,6 +3,12 @@ import KauMaeCore
 
 struct CheckHistoryView: View {
     let history: [CheckHistoryEntry]
+    let onReuse: ((CheckHistoryEntry) -> Void)?
+
+    init(history: [CheckHistoryEntry], onReuse: ((CheckHistoryEntry) -> Void)? = nil) {
+        self.history = history
+        self.onReuse = onReuse
+    }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 14) {
@@ -22,7 +28,7 @@ struct CheckHistoryView: View {
             } else {
                 VStack(spacing: 8) {
                     ForEach(history.prefix(5)) { entry in
-                        HistoryRow(entry: entry)
+                        HistoryRow(entry: entry, onReuse: onReuse)
                     }
                 }
             }
@@ -35,6 +41,7 @@ struct CheckHistoryView: View {
 
 private struct HistoryRow: View {
     let entry: CheckHistoryEntry
+    let onReuse: ((CheckHistoryEntry) -> Void)?
 
     var body: some View {
         HStack(alignment: .top, spacing: 10) {
@@ -53,6 +60,14 @@ private struct HistoryRow: View {
                 Text(entry.advice.headline)
                     .font(.caption.weight(.semibold))
                     .foregroundStyle(.secondary)
+                if let onReuse {
+                    Button("再チェック") {
+                        onReuse(entry)
+                    }
+                    .font(.caption.weight(.semibold))
+                    .buttonStyle(.plain)
+                    .foregroundStyle(.blue)
+                }
             }
         }
         .padding(10)

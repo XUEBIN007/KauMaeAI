@@ -91,6 +91,12 @@ final class AppState {
         latestAdvice = nil
     }
 
+    func reuseHistoryEntry(_ entry: CheckHistoryEntry) {
+        candidate = entry.candidate
+        occasion = entry.occasion
+        latestAdvice = entry.advice
+    }
+
     func unlockProForPreview() {
         quota = .paid(remainingFreeChecks: quota.remainingFreeChecks)
         showPaywall = false
