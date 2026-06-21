@@ -1,5 +1,6 @@
 import SwiftUI
 import PhotosUI
+import KauMaeCore
 
 struct ContentView: View {
     @State private var appState = AppState()
@@ -9,74 +10,189 @@ struct ContentView: View {
     var body: some View {
         @Bindable var appState = appState
 
-        NavigationStack {
-            ScrollView {
-                VStack(alignment: .leading, spacing: 24) {
-                    VStack(alignment: .leading, spacing: 10) {
-                        Text("KauMae AI")
-                            .font(.system(size: 30, weight: .bold))
-                        Text("この服、買っていい？")
-                            .font(.system(size: 22, weight: .semibold))
-                        Text("買う前に、似合うか・着回せるかをAIでチェック。")
-                            .font(.body)
-                            .foregroundStyle(.secondary)
-                    }
-
-                    FreeCheckBanner(remainingFreeChecks: appState.remainingFreeChecks)
-
-                    ProfileSetupView(profile: $appState.profile)
-
-                    WardrobeEditorView(
-                        wardrobe: appState.wardrobe,
-                        onAdd: appState.addWardrobeItem,
-                        onDelete: appState.removeWardrobeItem
-                    )
-
-                    ItemCheckView(
-                        candidate: $appState.candidate,
-                        occasion: $appState.occasion,
-                        selectedPhoto: $selectedPhoto,
-                        selectedPhotoData: selectedPhotoData
-                    ) {
-                        appState.runCheck()
-                    }
-
-                    if let advice = appState.latestAdvice {
-                        ResultView(
-                            advice: advice,
-                            candidate: appState.candidate,
-                            hasProductPhoto: selectedPhotoData != nil
-                        )
-                    }
-
-                    CheckHistoryView(history: appState.history)
-
-                    Button(role: .destructive) {
-                        appState.resetLocalDataForPreview()
-                    } label: {
-                        Label("入力をリセット", systemImage: "arrow.counterclockwise")
-                            .frame(maxWidth: .infinity)
-                    }
-                    .buttonStyle(.bordered)
-                }
-                .padding(20)
+        TabView {
+            NavigationStack {
+                CheckTabView(
+                    appState: appState,
+                    profile: $appState.profile,
+                    candidate: $appState.candidate,
+                    occasion: $appState.occasion,
+                    selectedPhoto: $selectedPhoto,
+                    selectedPhotoData: selectedPhotoData
+                )
+                .navigationTitle("買う前チェック")
+                .navigationBarTitleDisplayMode(.inline)
             }
-            .background(Color(.systemGroupedBackground))
-            .navigationTitle("買う前チェック")
-            .navigationBarTitleDisplayMode(.inline)
-            .sheet(isPresented: $appState.showPaywall) {
-                PaywallView {
-                    appState.unlockProForPreview()
-                }
+            .tabItem {
+                Label("チェック", systemImage: "checkmark.seal")
             }
-            .task(id: selectedPhoto) {
-                selectedPhotoData = try? await selectedPhoto?.loadTransferable(type: Data.self)
+
+            NavigationStack {
+                WardrobeTabView(appState: appState)
+                    .navigationTitle("手持ち服")
+                    .navigationBarTitleDisplayMode(.inline)
             }
+            .tabItem {
+                Label("衣橱", systemImage: "tshirt")
+            }
+
+            NavigationStack {
+                HistoryTabView(history: appState.history)
+                    .navigationTitle("履歴")
+                    .navigationBarTitleDisplayMode(.inline)
+            }
+            .tabItem {
+                Label("履歴", systemImage: "clock.arrow.circlepath")
+            }
+
+            NavigationStack {
+                ProTabView(
+                    remainingFreeChecks: appState.remainingFreeChecks,
+                    isPaid: appState.isPaid,
+                    onUnlock: appState.unlockProForPreview,
+                    onReset: appState.resetLocalDataForPreview
+                )
+                .navigationTitle("KauMae Pro")
+                .navigationBarTitleDisplayMode(.inline)
+            }
+            .tabItem {
+                Label("Pro", systemImage: "sparkles")
+            }
+        }
+        .sheet(isPresented: $appState.showPaywall) {
+            PaywallView {
+                appState.unlockProForPreview()
+            }
+        }
+        .task(id: selectedPhoto) {
+            selectedPhotoData = try? await selectedPhoto?.loadTransferable(type: Data.self)
         }
     }
 }
 
-private struct FreeCheckBanner: View {
+private struct CheckTabView: View {
+    let appState: AppState
+    @Binding var profile: StyleProfile
+    @Binding var candidate: CandidateItem
+    @Binding var occasion: Occasion
+    @Binding var selectedPhoto: PhotosPickerItem?
+    let selectedPhotoData: Data?
+
+    var body: some View {
+        ScrollView {
+            VStack(alignment: .leading, spacing: 24) {
+                HeroHeader()
+                FreeCheckBanner(remainingFreeChecks: appState.remainingFreeChecks)
+                ProfileSetupView(profile: $profile)
+                ItemCheckView(
+                    candidate: $candidate,
+                    occasion: $occasion,
+                    selectedPhoto: $selectedPhoto,
+                    selectedPhotoData: selectedPhotoData
+                ) {
+                    appState.runCheck()
+                }
+
+                if let advice = appState.latestAdvice {
+                    ResultView(
+                        advice: advice,
+                        candidate: candidate,
+                        hasProductPhoto: selectedPhotoData != nil
+                    )
+                }
+            }
+            .padding(20)
+        }
+        .background(Color(.systemGroupedBackground))
+    }
+}
+
+private struct WardrobeTabView: View {
+    let appState: AppState
+
+    var body: some View {
+        ScrollView {
+            VStack(spacing: 20) {
+                WardrobeEditorView(
+                    wardrobe: appState.wardrobe,
+                    onAdd: appState.addWardrobeItem,
+                    onDelete: appState.removeWardrobeItem
+                )
+            }
+            .padding(20)
+        }
+        .background(Color(.systemGroupedBackground))
+    }
+}
+
+private struct HistoryTabView: View {
+    let history: [CheckHistoryEntry]
+
+    var body: some View {
+        ScrollView {
+            VStack(spacing: 20) {
+                CheckHistoryView(history: history)
+            }
+            .padding(20)
+        }
+        .background(Color(.systemGroupedBackground))
+    }
+}
+
+private struct ProTabView: View {
+    let remainingFreeChecks: Int
+    let isPaid: Bool
+    let onUnlock: () -> Void
+    let onReset: () -> Void
+
+    var body: some View {
+        ScrollView {
+            VStack(alignment: .leading, spacing: 20) {
+                FreeCheckBanner(remainingFreeChecks: remainingFreeChecks)
+                VStack(alignment: .leading, spacing: 14) {
+                    Text(isPaid ? "Pro 有効" : "KauMae Pro")
+                        .font(.title2.weight(.bold))
+                    Text("迷った服を何度でもチェック。試着イメージ生成はクレジット制で追加予定です。")
+                        .font(.subheadline)
+                        .foregroundStyle(.secondary)
+                    Button(action: onUnlock) {
+                        Label(isPaid ? "Pro有効化済み" : "プレビュー用にProを有効化", systemImage: "sparkles")
+                            .frame(maxWidth: .infinity)
+                    }
+                    .buttonStyle(.borderedProminent)
+                    .disabled(isPaid)
+                }
+                .padding(16)
+                .background(.white)
+                .clipShape(RoundedRectangle(cornerRadius: 8))
+
+                Button(role: .destructive, action: onReset) {
+                    Label("入力をリセット", systemImage: "arrow.counterclockwise")
+                        .frame(maxWidth: .infinity)
+                }
+                .buttonStyle(.bordered)
+            }
+            .padding(20)
+        }
+        .background(Color(.systemGroupedBackground))
+    }
+}
+
+private struct HeroHeader: View {
+    var body: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            Text("KauMae AI")
+                .font(.system(size: 30, weight: .bold))
+            Text("この服、買っていい？")
+                .font(.system(size: 22, weight: .semibold))
+            Text("買う前に、似合うか・着回せるかをAIでチェック。")
+                .font(.body)
+                .foregroundStyle(.secondary)
+        }
+    }
+}
+
+struct FreeCheckBanner: View {
     let remainingFreeChecks: Int
 
     var body: some View {
