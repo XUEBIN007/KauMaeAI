@@ -17,6 +17,11 @@ struct ItemCheckView: View {
                 selectedPhotoData: selectedPhotoData
             )
 
+            PresetCandidateStrip { preset in
+                candidate = preset.item
+                occasion = preset.occasion
+            }
+
             HStack(alignment: .top) {
                 VStack(alignment: .leading, spacing: 6) {
                     Text("チェックする服")
@@ -65,6 +70,58 @@ struct ItemCheckView: View {
             get: { candidate[keyPath: keyPath] },
             set: { candidate = candidate.replacing(keyPath, with: $0) }
         )
+    }
+}
+
+private struct PresetCandidate {
+    let title: String
+    let item: CandidateItem
+    let occasion: Occasion
+}
+
+private struct PresetCandidateStrip: View {
+    let onSelect: (PresetCandidate) -> Void
+
+    private let presets = [
+        PresetCandidate(
+            title: "通勤ジャケット",
+            item: CandidateItem(name: "Navy jacket", category: .outerwear, color: .navy, formality: .businessCasual, pattern: .solid, priceJPY: 7990),
+            occasion: .work
+        ),
+        PresetCandidate(
+            title: "休日カーディガン",
+            item: CandidateItem(name: "Mustard cardigan", category: .outerwear, color: .mustard, formality: .smartCasual, pattern: .solid, priceJPY: 4990),
+            occasion: .weekend
+        ),
+        PresetCandidate(
+            title: "ロゴT",
+            item: CandidateItem(name: "Logo T-shirt", category: .top, color: .white, formality: .casual, pattern: .logo, priceJPY: 1990),
+            occasion: .weekend
+        )
+    ]
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Text("すぐ試す")
+                .font(.headline)
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(spacing: 8) {
+                    ForEach(presets, id: \.title) { preset in
+                        Button {
+                            onSelect(preset)
+                        } label: {
+                            Text(preset.title)
+                                .font(.subheadline.weight(.semibold))
+                                .padding(.vertical, 8)
+                                .padding(.horizontal, 12)
+                                .background(Color(.secondarySystemGroupedBackground))
+                                .clipShape(RoundedRectangle(cornerRadius: 8))
+                        }
+                        .buttonStyle(.plain)
+                    }
+                }
+            }
+        }
     }
 }
 
