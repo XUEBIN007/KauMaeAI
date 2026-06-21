@@ -33,7 +33,7 @@ struct ContentView: View {
                     .navigationBarTitleDisplayMode(.inline)
             }
             .tabItem {
-                Label("衣橱", systemImage: "tshirt")
+                Label("クローゼット", systemImage: "tshirt")
             }
 
             NavigationStack {
@@ -83,7 +83,6 @@ private struct CheckTabView: View {
             VStack(alignment: .leading, spacing: 24) {
                 HeroHeader()
                 FreeCheckBanner(remainingFreeChecks: appState.remainingFreeChecks)
-                ProfileSetupView(profile: $profile)
                 ItemCheckView(
                     candidate: $candidate,
                     occasion: $occasion,
@@ -100,6 +99,7 @@ private struct CheckTabView: View {
                         hasProductPhoto: selectedPhotoData != nil
                     )
                 }
+                ProfileSetupView(profile: $profile)
             }
             .padding(20)
         }
@@ -232,7 +232,7 @@ private struct HeroHeader: View {
                 .font(.system(size: 30, weight: .bold))
             Text("この服、買っていい？")
                 .font(.system(size: 22, weight: .semibold))
-            Text("買う前に、似合うか・着回せるかをAIでチェック。")
+            Text("10秒で、似合うか・着回せるか・買うべきかを判断。")
                 .font(.body)
                 .foregroundStyle(.secondary)
         }
