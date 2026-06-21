@@ -155,6 +155,24 @@ private struct ProTabView: View {
                     Text("迷った服を何度でもチェック。試着イメージ生成はクレジット制で追加予定です。")
                         .font(.subheadline)
                         .foregroundStyle(.secondary)
+                    PricingPlanRow(
+                        title: "Pro 月額",
+                        price: "¥980",
+                        detail: "月50回の買う前チェック",
+                        icon: "checkmark.seal"
+                    )
+                    PricingPlanRow(
+                        title: "チェック10回",
+                        price: "¥480",
+                        detail: "サブスクなしで買い物前だけ使う",
+                        icon: "bag"
+                    )
+                    PricingPlanRow(
+                        title: "画像10枚",
+                        price: "¥500",
+                        detail: "試着イメージ生成のAPIコストを回収",
+                        icon: "photo.on.rectangle"
+                    )
                     Button(action: onUnlock) {
                         Label(isPaid ? "Pro有効化済み" : "プレビュー用にProを有効化", systemImage: "sparkles")
                             .frame(maxWidth: .infinity)
@@ -175,6 +193,35 @@ private struct ProTabView: View {
             .padding(20)
         }
         .background(Color(.systemGroupedBackground))
+    }
+}
+
+private struct PricingPlanRow: View {
+    let title: String
+    let price: String
+    let detail: String
+    let icon: String
+
+    var body: some View {
+        HStack(spacing: 12) {
+            Image(systemName: icon)
+                .font(.title3)
+                .foregroundStyle(.blue)
+                .frame(width: 30)
+            VStack(alignment: .leading, spacing: 3) {
+                Text(title)
+                    .font(.subheadline.weight(.semibold))
+                Text(detail)
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
+            Spacer()
+            Text(price)
+                .font(.headline)
+        }
+        .padding(12)
+        .background(Color(.secondarySystemGroupedBackground))
+        .clipShape(RoundedRectangle(cornerRadius: 8))
     }
 }
 
